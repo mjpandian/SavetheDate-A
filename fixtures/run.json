@@ -1,0 +1,98 @@
+{
+  "id": "run-1",
+  "createdAt": "2026-10-29T09:00:00.000Z",
+  "emptyCategories": ["creative", "wellness"],
+  "discovered": [],
+  "candidates": [
+    {
+      "id": "cand-ramen", "activityId": "act-ramen",
+      "slotStart": "2026-11-05T17:30:00.000Z", "slotEnd": "2026-11-05T19:30:00.000Z",
+      "attendancePct": 88, "availableMemberIds": ["m1", "m2", "m3", "m4", "m5", "m6", "m8"], "matchedMemberIds": ["m1", "m3", "m5"],
+      "weather": "",
+      "criteria": { "C1": true, "C2": 3, "C3": null, "C4": true, "C5": true, "C5penalty": false },
+      "score": 0.82, "explanation": "Under budget at $24, three members listed dining, and seven of eight are free on Thursday evening.",
+      "priceIsEstimate": false, "sourceUrl": "https://example.com/ramen-bar"
+    },
+    {
+      "id": "cand-tapas", "activityId": "act-tapas",
+      "slotStart": "2026-11-07T12:30:00.000Z", "slotEnd": "2026-11-07T14:30:00.000Z",
+      "attendancePct": 75, "availableMemberIds": ["m1", "m3", "m4", "m5", "m6", "m8"], "matchedMemberIds": ["m1", "m5", "m8"],
+      "weather": "",
+      "criteria": { "C1": true, "C2": 3, "C3": null, "C4": true, "C5": true, "C5penalty": false },
+      "score": 0.71, "explanation": "A relaxed Saturday lunch crawl. Six of eight can come and three share the interest.",
+      "priceIsEstimate": false, "sourceUrl": "https://example.com/tapas-crawl"
+    },
+    {
+      "id": "cand-beer", "activityId": "act-craft-beer",
+      "slotStart": "2026-11-05T17:30:00.000Z", "slotEnd": "2026-11-05T19:30:00.000Z",
+      "attendancePct": 88, "availableMemberIds": ["m1", "m2", "m3", "m4", "m5", "m6", "m8"], "matchedMemberIds": ["m1", "m2", "m6"],
+      "weather": "",
+      "criteria": { "C1": true, "C2": 3, "C3": null, "C4": true, "C5": true, "C5penalty": false },
+      "score": 0.78, "explanation": "Cheap at $20 and three members like drinks. Same slot as the ramen option, so the team can only pick one.",
+      "priceIsEstimate": false, "sourceUrl": "https://example.com/craft-beer"
+    },
+    {
+      "id": "cand-cocktail", "activityId": "act-cocktail",
+      "slotStart": "2026-11-10T17:30:00.000Z", "slotEnd": "2026-11-10T19:30:00.000Z",
+      "attendancePct": 63, "availableMemberIds": ["m1", "m2", "m5", "m6", "m7"], "matchedMemberIds": ["m1", "m6"],
+      "weather": "",
+      "criteria": { "C1": true, "C2": 2, "C3": null, "C4": true, "C5": true, "C5penalty": true },
+      "score": 0.58, "explanation": "Near the top of the budget at $42 and only five members are free. Ranked lower because the last event was also in this category.",
+      "priceIsEstimate": false, "sourceUrl": "https://example.com/cocktail-workshop"
+    },
+    {
+      "id": "cand-kayak", "activityId": "act-kayak",
+      "slotStart": "2026-11-07T14:00:00.000Z", "slotEnd": "2026-11-07T16:00:00.000Z",
+      "attendancePct": 75, "availableMemberIds": ["m1", "m3", "m4", "m6", "m7", "m8"], "matchedMemberIds": ["m3", "m6", "m8"],
+      "weather": "Dry, 17 °C, light wind, rain chance 10%",
+      "criteria": { "C1": true, "C2": 3, "C3": true, "C4": true, "C5": true, "C5penalty": false },
+      "score": 0.74, "explanation": "The only outdoor option that passes the weather rule: dry and mild on Saturday afternoon. Three members like the outdoors.",
+      "priceIsEstimate": false, "sourceUrl": "https://example.com/sunset-kayak"
+    },
+    {
+      "id": "cand-bowling", "activityId": "act-bowling",
+      "slotStart": "2026-11-12T17:30:00.000Z", "slotEnd": "2026-11-12T19:30:00.000Z",
+      "attendancePct": 100, "availableMemberIds": ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"], "matchedMemberIds": ["m2", "m8"],
+      "weather": "",
+      "criteria": { "C1": true, "C2": 2, "C3": null, "C4": true, "C5": true, "C5penalty": false },
+      "score": 0.85, "explanation": "Everyone is free on Thursday the 12th and the price is low. The price is an estimate from the venue's usual rate, so confirm it before the vote.",
+      "priceIsEstimate": true, "sourceUrl": "https://example.com/bowling"
+    },
+    {
+      "id": "cand-museum", "activityId": "act-museum",
+      "slotStart": "2026-11-10T17:30:00.000Z", "slotEnd": "2026-11-10T19:30:00.000Z",
+      "attendancePct": 63, "availableMemberIds": ["m1", "m2", "m5", "m6", "m7"], "matchedMemberIds": ["m1", "m7"],
+      "weather": "",
+      "criteria": { "C1": true, "C2": 2, "C3": null, "C4": true, "C5": true, "C5penalty": false },
+      "score": 0.66, "explanation": "Easy on the wallet at $16. Only two members listed it, so it passes the shared-interest floor but does not score high.",
+      "priceIsEstimate": false, "sourceUrl": "https://example.com/art-museum"
+    },
+    {
+      "id": "cand-improv", "activityId": "act-improv",
+      "slotStart": "2026-11-05T17:30:00.000Z", "slotEnd": "2026-11-05T19:30:00.000Z",
+      "attendancePct": 88, "availableMemberIds": ["m1", "m2", "m3", "m4", "m5", "m6", "m8"], "matchedMemberIds": ["m1", "m4", "m5"],
+      "weather": "",
+      "criteria": { "C1": true, "C2": 3, "C3": null, "C4": true, "C5": true, "C5penalty": false },
+      "score": 0.73, "explanation": "A low-effort evening out with seven of eight free and three members interested in culture.",
+      "priceIsEstimate": false, "sourceUrl": "https://example.com/improv-show"
+    },
+    {
+      "id": "cand-escape", "activityId": "act-escape",
+      "slotStart": "2026-11-07T12:30:00.000Z", "slotEnd": "2026-11-07T14:30:00.000Z",
+      "attendancePct": 75, "availableMemberIds": ["m1", "m3", "m4", "m5", "m6", "m8"], "matchedMemberIds": ["m2", "m4", "m6"],
+      "weather": "",
+      "criteria": { "C1": true, "C2": 3, "C3": null, "C4": true, "C5": true, "C5penalty": false },
+      "score": 0.77, "explanation": "Three members listed games and six can make it on Saturday. Works well for a team of eight.",
+      "priceIsEstimate": false, "sourceUrl": "https://example.com/escape-room"
+    },
+    {
+      "id": "cand-boardgame", "activityId": "act-boardgame",
+      "slotStart": "2026-11-12T17:30:00.000Z", "slotEnd": "2026-11-12T19:30:00.000Z",
+      "attendancePct": 100, "availableMemberIds": ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"], "matchedMemberIds": ["m4", "m6"],
+      "weather": "",
+      "criteria": { "C1": true, "C2": 2, "C3": null, "C4": true, "C5": true, "C5penalty": false },
+      "score": 0.8, "explanation": "The cheapest option with full attendance. Two members listed board games, enough to pass the floor.",
+      "priceIsEstimate": false, "sourceUrl": "https://example.com/board-game-cafe"
+    }
+  ]
+}

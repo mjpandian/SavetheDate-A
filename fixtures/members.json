@@ -1,0 +1,10 @@
+[
+  { "id": "m1", "name": "Ava",   "categories": ["dining", "drinks", "culture"],   "tags": ["act-ramen", "act-museum"],       "constraints": {} },
+  { "id": "m2", "name": "Ben",   "categories": ["sports", "games", "drinks"],     "tags": ["act-bowling", "act-escape"],     "constraints": {} },
+  { "id": "m3", "name": "Chloé", "categories": ["outdoor", "wellness", "dining"], "tags": ["act-kayak", "yoga"],             "constraints": { "alcoholFree": true } },
+  { "id": "m4", "name": "Dev",   "categories": ["games", "sports", "culture"],    "tags": ["act-boardgame", "act-climbing"], "constraints": {} },
+  { "id": "m5", "name": "Elif",  "categories": ["dining", "creative", "culture"], "tags": ["act-tapas", "act-improv"],       "constraints": {} },
+  { "id": "m6", "name": "Farid", "categories": ["drinks", "games", "outdoor"],    "tags": ["act-craft-beer"],                "constraints": {} },
+  { "id": "m7", "name": "Grace", "categories": ["culture", "wellness", "creative"], "tags": ["act-museum", "act-pottery"],   "constraints": { "stepFreeAccess": true } },
+  { "id": "m8", "name": "Hana",  "categories": ["sports", "outdoor", "dining"],   "tags": ["act-kayak", "act-bowling"],      "constraints": {} }
+]

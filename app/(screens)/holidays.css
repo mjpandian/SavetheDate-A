@@ -1,0 +1,71 @@
+/* Holiday palettes. Each block overrides the party tokens from screens.css for one holiday,
+   in a light and a dark variant, so the theme and the viewer's light/dark setting both work.
+   Token roles: --sun main highlight, --tomato hot accent, --mint and --sky and --pink supporting colors. */
+
+/* Strip behind the ticker: dark ink in light mode, a tinted card in dark mode. */
+.party { --strip: var(--ink); }
+@media (prefers-color-scheme: dark) { .party { --strip: color-mix(in srgb, var(--sun) 16%, var(--card)); } }
+.ticker { background: var(--strip); }
+
+/* ---- Halloween ---- */
+.party[data-holiday="halloween"] { --bg:#fff2e2; --card:#ffffff; --text:#1b1030; --muted:#6b5a7e; --line:#ebd3b8; --sun:#ff8a00; --tomato:#e8590c; --mint:#6bcb2f; --sky:#8b5cf6; --pink:#c026d3; --ink:#1b1030; }
+/* ---- Thanksgiving ---- */
+.party[data-holiday="thanksgiving"] { --bg:#fff4e2; --card:#ffffff; --text:#3b1f0b; --muted:#7a5a40; --line:#ecd3b0; --sun:#f2a93b; --tomato:#c8501e; --mint:#7a9a2a; --sky:#b9692f; --pink:#b5332e; --ink:#3b1f0b; }
+/* ---- Christmas ---- */
+.party[data-holiday="christmas"] { --bg:#f3f8f6; --card:#ffffff; --text:#0f2a1d; --muted:#4f6b5c; --line:#cfe3d8; --sun:#f5c542; --tomato:#d62839; --mint:#1b9e5a; --sky:#7cc6fe; --pink:#e85d75; --ink:#0f2a1d; }
+/* ---- New Year's Eve ---- */
+.party[data-holiday="newyear"] { --bg:#faf6e9; --card:#ffffff; --text:#14120a; --muted:#6b6445; --line:#e6dcb8; --sun:#d4af37; --tomato:#e63946; --mint:#aeb8c8; --sky:#6c8bff; --pink:#ff8fb1; --ink:#14120a; }
+/* ---- Valentine's Day ---- */
+.party[data-holiday="valentine"] { --bg:#fff0f5; --card:#ffffff; --text:#3a0a1d; --muted:#7d4a5f; --line:#f4cddb; --sun:#ff8fab; --tomato:#d90429; --mint:#ff758f; --sky:#c77dff; --pink:#ff4d6d; --ink:#3a0a1d; }
+/* ---- St. Patrick's Day ---- */
+.party[data-holiday="stpatrick"] { --bg:#effbf1; --card:#ffffff; --text:#0b2a16; --muted:#4a6b55; --line:#c9e8d1; --sun:#ffd23f; --tomato:#e8590c; --mint:#1fad66; --sky:#0b8f5a; --pink:#7bc96f; --ink:#0b2a16; }
+/* ---- Easter ---- */
+.party[data-holiday="easter"] { --bg:#fbf6ff; --card:#ffffff; --text:#2a1f45; --muted:#6e6590; --line:#e4daf5; --sun:#ffe066; --tomato:#ff8fa3; --mint:#9be7c4; --sky:#a0c4ff; --pink:#ffb5e8; --ink:#2a1f45; }
+/* ---- Memorial Day weekend ---- */
+.party[data-holiday="memorial"] { --bg:#eaf9ff; --card:#ffffff; --text:#08233b; --muted:#4a6a82; --line:#c4e4f2; --sun:#ffd23f; --tomato:#ff6b35; --mint:#00c2a8; --sky:#1e90ff; --pink:#ff7eb6; --ink:#08233b; }
+/* ---- Independence Day ---- */
+.party[data-holiday="july4"] { --bg:#f3f6ff; --card:#ffffff; --text:#0b1236; --muted:#4d5788; --line:#d3dbf5; --sun:#ffd166; --tomato:#d7263d; --mint:#3b6cff; --sky:#2f6bff; --pink:#ff6b81; --ink:#0b1236; }
+/* ---- Labor Day ---- */
+.party[data-holiday="labor"] { --bg:#fff7e8; --card:#ffffff; --text:#2b1d0c; --muted:#76624a; --line:#efdcb8; --sun:#ffc247; --tomato:#f25c54; --mint:#2ab7a9; --sky:#2d9cdb; --pink:#f78fb3; --ink:#2b1d0c; }
+
+@media (prefers-color-scheme: dark) {
+  .party[data-holiday="halloween"] { --bg:#0c0614; --card:#1b0e2e; --text:#ffebd3; --muted:#b9a3d6; --line:#3a2257; --ink:#ffebd3; }
+  .party[data-holiday="thanksgiving"] { --bg:#1d1109; --card:#2c1b0f; --text:#ffebd0; --muted:#d0b08c; --line:#4d3320; --ink:#ffebd0; }
+  .party[data-holiday="christmas"] { --bg:#08170f; --card:#10261a; --text:#f0fff4; --muted:#a2c4b0; --line:#1f4a33; --ink:#f0fff4; }
+  .party[data-holiday="newyear"] { --bg:#07070f; --card:#14141f; --text:#f7f3e4; --muted:#aaa58c; --line:#2d2b44; --ink:#f7f3e4; }
+  .party[data-holiday="valentine"] { --bg:#1a0710; --card:#2a0f1c; --text:#ffe6ee; --muted:#d9a3b5; --line:#4d1c33; --ink:#ffe6ee; }
+  .party[data-holiday="stpatrick"] { --bg:#06150c; --card:#0e2417; --text:#e8ffee; --muted:#9bc5a8; --line:#1d4a2c; --ink:#e8ffee; }
+  .party[data-holiday="easter"] { --bg:#17142b; --card:#241f40; --text:#f4efff; --muted:#b6aedb; --line:#3a3366; --ink:#f4efff; }
+  .party[data-holiday="memorial"] { --bg:#06182b; --card:#0e2a45; --text:#e8f6ff; --muted:#9bbbd4; --line:#1b4468; --ink:#e8f6ff; }
+  .party[data-holiday="july4"] { --bg:#060b24; --card:#0f1840; --text:#eef1ff; --muted:#a3acd8; --line:#222f6b; --ink:#eef1ff; }
+  .party[data-holiday="labor"] { --bg:#101426; --card:#1b2140; --text:#fff3dc; --muted:#c4b79a; --line:#343b66; --ink:#fff3dc; }
+}
+
+/* Surfaces that still use the plain Tailwind classes take the theme's card and line colors. */
+.party .bg-white, .party .dark\:bg-zinc-900, .party .dark\:bg-zinc-950 { background-color: var(--card); }
+.party .border-zinc-200, .party .border-zinc-300, .party .dark\:border-zinc-800, .party .dark\:border-zinc-700 { border-color: var(--line); }
+
+/* Theme-aware link and tag styles used by the screens. */
+.link-party { color: var(--tomato); font-weight: 800; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 2px; }
+.link-party:hover { color: var(--text); }
+.holiday-chip { display: inline-flex; align-items: center; gap: 0.5rem; border: 2px solid var(--ink); border-radius: 999px; background: var(--sun); color: #14103a; font-weight: 800; font-size: 0.85rem; padding: 0.2rem 0.85rem; box-shadow: 3px 3px 0 var(--ink); }
+
+/* ---- floating glyphs ---- */
+.particles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.particle { position: absolute; top: 0; left: var(--x); font-size: var(--s); opacity: 0.8; line-height: 1; will-change: transform; animation: var(--motion, fall) var(--d) linear infinite; animation-delay: var(--delay); }
+.particles.fall .particle { --motion: fall; }
+.particles.rise .particle { --motion: rise; }
+@keyframes fall { 0% { transform: translate3d(0, -12vh, 0) rotate(0deg); } 50% { transform: translate3d(var(--dx), 50vh, 0) rotate(180deg); } 100% { transform: translate3d(calc(var(--dx) * -0.6), 112vh, 0) rotate(360deg); } }
+@keyframes rise { 0% { transform: translate3d(0, 112vh, 0) rotate(-12deg); } 50% { transform: translate3d(var(--dx), 50vh, 0) rotate(14deg); } 100% { transform: translate3d(calc(var(--dx) * -0.6), -14vh, 0) rotate(-8deg); } }
+
+/* Emoji floaters in the hero. */
+.emoji { position: absolute; z-index: 0; font-size: 2.4rem; line-height: 1; }
+.e1 { right: 6%; top: 8%; animation: floaty 4.8s ease-in-out infinite; }
+.e2 { right: 28%; bottom: 8%; font-size: 1.9rem; animation: floaty 6s ease-in-out infinite -2s; }
+.e3 { right: 15%; top: 42%; font-size: 2.8rem; animation: floaty 5.4s ease-in-out infinite -1s, wiggle 3.2s ease-in-out infinite; }
+@media (max-width: 640px) { .e2 { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .particles { display: none; }
+  .emoji { animation: none !important; }
+}

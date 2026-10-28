@@ -1,0 +1,16 @@
+{
+  "events": [
+    { "id": "e1", "activityId": "act-pizza-class", "start": "2026-09-17T17:30:00.000Z", "end": "2026-09-17T19:30:00.000Z" },
+    { "id": "e2", "activityId": "act-bike-tour",   "start": "2026-10-01T16:00:00.000Z", "end": "2026-10-01T18:00:00.000Z" },
+    { "id": "e3", "activityId": "act-pub-quiz",    "start": "2026-10-15T18:00:00.000Z", "end": "2026-10-15T20:00:00.000Z" }
+  ],
+  "ratings": [
+    { "id": "r1", "eventId": "e1", "memberId": "m1", "score": 4 },
+    { "id": "r2", "eventId": "e1", "memberId": "m5", "score": 5 },
+    { "id": "r3", "eventId": "e1", "memberId": "m7", "score": 4 },
+    { "id": "r4", "eventId": "e2", "memberId": "m3", "score": 5 },
+    { "id": "r5", "eventId": "e2", "memberId": "m8", "score": 4 },
+    { "id": "r6", "eventId": "e3", "memberId": "m2", "score": 3 },
+    { "id": "r7", "eventId": "e3", "memberId": "m4", "score": 4 }
+  ]
+}
