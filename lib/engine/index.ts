@@ -5,6 +5,7 @@ import type { Activity, Candidate, Category, Forecast, PlanContext, PlanResult, 
 import { c1Price, c2Preference, c3Weather, c4Attendance, c5Novelty } from "./rules";
 import { computeScore, priceScore, ratingAffinity } from "./score";
 import { findSlots } from "./slots";
+import { resolveActivity } from "./data";
 import { localDateKey } from "./time";
 
 export const SHORTLIST_PER_CATEGORY = 2;
@@ -42,18 +43,32 @@ export function planCandidates(ctx: PlanContext): PlanResult {
     if (best) bestPerActivity.push(best);
   }
 
-  const price = (c: Candidate) => byId.get(c.activityId)?.pricePerPerson ?? Infinity;
-  const candidates: Candidate[] = [];
+  const { candidates, emptyCategories } = shortlist(bestPerActivity, activities);
+  return { candidates, emptyCategories, discovered: [] };
+}
+
+/**
+ * C6 shortlist: best SHORTLIST_PER_CATEGORY per category, in CATEGORIES order, plus the
+ * categories left with no option. `candidates` should hold one row per activity.
+ */
+export function shortlist(
+  candidates: readonly Candidate[],
+  catalog: readonly Activity[],
+  discovered: readonly Activity[] = [],
+): { candidates: Candidate[]; emptyCategories: Category[] } {
+  const priceOf = (c: Candidate) => resolveActivity(c.activityId, catalog, discovered)?.pricePerPerson ?? Infinity;
+  const categoryOf = (c: Candidate) => resolveActivity(c.activityId, catalog, discovered)?.category;
+  const kept: Candidate[] = [];
   const emptyCategories: Category[] = [];
   for (const category of CATEGORIES) {
-    const inCategory = bestPerActivity
-      .filter((c) => byId.get(c.activityId)?.category === category)
-      .sort(compareInCategory(price))
+    const inCategory = candidates
+      .filter((c) => categoryOf(c) === category)
+      .sort(compareInCategory(priceOf))
       .slice(0, SHORTLIST_PER_CATEGORY);
     if (inCategory.length === 0) emptyCategories.push(category);
-    candidates.push(...inCategory);
+    kept.push(...inCategory);
   }
-  return { candidates, emptyCategories, discovered: [] };
+  return { candidates: kept, emptyCategories };
 }
 
 /** Same activity across slots: higher score, then attendance, then earlier start. */
@@ -61,7 +76,11 @@ function compareSlots(a: Candidate, b: Candidate): number {
   return b.score - a.score || b.attendancePct - a.attendancePct || Date.parse(a.slotStart) - Date.parse(b.slotStart);
 }
 
-function buildCandidate(
+/**
+ * One candidate for `activity` in `slot`, or undefined when C4, C3 or C5 fails. Shared by the
+ * deterministic planner and the agent validator, so both score rows the same way.
+ */
+export function buildCandidate(
   ctx: PlanContext,
   activity: Activity,
   slot: Slot,

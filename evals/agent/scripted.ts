@@ -1,7 +1,7 @@
 import type { Activity, Candidate, PlanContext } from "@/lib/types";
 
 /**
- * Scripted Anthropic clients. ASSUMPTIONS (from workstreams/A-engine/imp_plan.md; adjust here if the real loop differs):
+ * Scripted Anthropic clients. Assumptions match lib/engine/agent/tools.ts and loop.ts (tool names, submit_candidates shape, stop_reason handling):
  *  - tools are named find_slots and submit_candidates;
  *  - submit_candidates input is { candidates: [{ activityId | sourceRef, slotStart, slotEnd, explanation, priceIsEstimate? }] };
  *  - the loop reads `stop_reason`, `content[]` (tool_use / text) and `usage` from client.messages.create().

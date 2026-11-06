@@ -34,7 +34,9 @@ baseline · tight budget (limit 15) · bad-weather week · low-attendance week �
 | Live | `agent.live.test.ts` | yes | Real Claude through the real loop on every scenario × `EVAL_RUNS` (default 2) |
 
 `EVAL_LIVE=1 EVAL_RUNS=2 EVAL_JUDGE=1 npx vitest run evals/agent/agent.live.test.ts`
-Output: console table (mode, ms, candidates, categories filled, usage, gaps, discovered) and `evals/agent/results/<ts>.json` with every problem.
+Output: console table (mode, ms, candidates, categories filled, usage, gaps, discovered, costUsd) and `evals/agent/results/<ts>.json` with every problem, per-run cost by model and `totalCost`.
+
+**Cost.** Each run's `usage` (input and output tokens summed over the loop) is priced at list rates in `evals/shared/pricing.ts` (Opus 5.5 $4/$20, Sonnet 5.5 $2/$10 per MTok; checked against the pricing page 2026-10-28). The summary line gives the total per model and the mean per run at `EVAL_COST_MODEL` (default: the agent model, `claude-sonnet-5-5`). Set `EVAL_MAX_COST_USD` to fail the run when that model's total exceeds the budget. Judge calls are not included: the judge does not return usage. Haiku 5.5 is not priced yet because it has a second tier above 100K prompt tokens.
 
 ## Release bars (live)
 
@@ -54,9 +56,9 @@ Output: console table (mode, ms, candidates, categories filled, usage, gaps, dis
 2. `ActivitySource` result fields `{ ref, name, category, price, priceIsEstimate, sourceUrl }` and methods `searchPlaces` / `searchEvents`; passed as `opts.source`.
 3. `AgentResult.usage.toolCalls` counts executed tools and `trace` has one entry each.
 4. Slots and forecast dates are keyed on UTC dates; `eventLengthMin` is the exact slot length.
-5. The `Budget` field names are not in the contract, so cap enforcement (tool-call, token, timeout ending the loop) is checked live against the contract defaults, not forced offline. Add an offline test once the names are fixed.
+5. Cap enforcement (tool-call, token, timeout ending the loop) is forced offline with `budget` overrides (`maxToolCalls`, `maxTokens`, `timeoutMs`). The live tier still checks the default caps against real usage.
 6. Tool-result text, repair-round wording and event streaming (`onProgress`) are not asserted.
 
 ## Validation status
 
-Verified in a scratch copy with a throwaway reference planner and agent loop (61 tests green, `tsc` clean). **Not yet run against the real agent**, which has not landed (`lib/engine/` is empty). Expect assumption 1–3 tweaks on first contact.
+Against the real `lib/engine/agent` (landed): oracle self-test, offline tier (cheating-model rows must reach the agent path, so a silent fallback fails the test) and cap tests all pass with no key. **Live tier not yet run**: it needs `EVAL_LIVE=1` and `ANTHROPIC_API_KEY`, so the hard guarantee against a real model, the 90% agent-path rate, and the quality bars are unmeasured. Run it before relying on the agent.
