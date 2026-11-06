@@ -13,6 +13,11 @@ import type { Candidate } from "@/lib/types";
  */
 export function useTestEnv(): { db: Db; dir: string; cleanup: () => void } {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "savethedate-"));
+  // The engine loaders read DATA_DIR. Catalog and events come from this suite's fixtures; busy, forecast and team come from data/.
+  fs.copyFileSync(path.join(process.cwd(), "tests", "backend", "fixtures", "activities.json"), path.join(dir, "activities.json"));
+  for (const name of ["busy.json", "forecast.json", "team.json"]) {
+    fs.copyFileSync(path.join(process.cwd(), "data", name), path.join(dir, name));
+  }
   process.env.DATA_DIR = dir;
   delete process.env.ANTHROPIC_API_KEY;
   const db = openDb(":memory:");

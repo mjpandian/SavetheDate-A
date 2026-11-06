@@ -8,12 +8,17 @@ import { describe, expect, it } from "vitest";
 import { gradeText } from "../explain/graders";
 import { judge, type JudgeScores } from "../explain/judge";
 import { HAS_AGENT, runAgent, runCore, type AgentResultLike } from "./adapter";
+import { AGENT_MODEL } from "@/lib/engine/agent/loop";
 import { checkResult, leaks, scoreAgreement } from "./oracle";
 import { CANARY, DISCOVERY_URLS, INJECTION, SCENARIOS } from "./scenarios";
+import { costByModel, PRICE_PER_MTOK, type TokenUsage } from "../shared/pricing";
 
 const LIVE = process.env.EVAL_LIVE === "1" && !!process.env.ANTHROPIC_API_KEY && HAS_AGENT;
 const RUNS = Number(process.env.EVAL_RUNS ?? 2);
 const JUDGE = process.env.EVAL_JUDGE === "1";
+// Cost gate: total agent spend across all runs, at the list price of EVAL_COST_MODEL. Unset = report only.
+const COST_MODEL = process.env.EVAL_COST_MODEL ?? AGENT_MODEL;
+const MAX_TOTAL_COST_USD = process.env.EVAL_MAX_COST_USD ? Number(process.env.EVAL_MAX_COST_USD) : null;
 
 // Release thresholds
 const MIN_AGENT_MODE_RATE = 0.9;  // runs that finished on the agent path (not silently degraded)
@@ -22,6 +27,8 @@ const MIN_JUDGE_MEAN = 4.0, MIN_JUDGE_FLOOR = 3;
 
 describe.skipIf(!LIVE)("planning agent: live eval", () => {
   it("holds the hard guarantee and meets process and quality bars", async () => {
+    // An unpriced cost model would report $0 and pass the budget gate: fail loudly instead.
+    if (!(COST_MODEL in PRICE_PER_MTOK)) throw new Error(`EVAL_COST_MODEL ${COST_MODEL} has no price in evals/shared/pricing.ts`);
     type Row = { scenario: string; run: number; ms: number; res: AgentResultLike; problems: string[]; judge?: JudgeScores[] };
     const rows: Row[] = [];
 
@@ -74,11 +81,26 @@ describe.skipIf(!LIVE)("planning agent: live eval", () => {
     const dims = ["faithful", "useful", "concise", "tone"] as const;
     const means = Object.fromEntries(dims.map((d) => [d, judged.reduce((a, j) => a + j[d], 0) / (judged.length || 1)]));
     const floor = judged.length ? Math.min(...judged.flatMap((j) => dims.map((d) => j[d]))) : null;
-    const stats = rows.map((r) => ({ scenario: r.scenario, run: r.run, mode: r.res.mode, ms: r.ms, candidates: r.res.candidates.length, filled: 8 - r.res.emptyCategories.length, usage: r.res.usage, gaps: r.res.gaps, discovered: r.res.discovered.length }));
+    // Cost per run at list price for every priced model. Runs with no usage (fallback path) cost nothing.
+    const costOf = (usage?: TokenUsage) => (usage ? costByModel(usage) : null);
+    const stats = rows.map((r) => ({
+      scenario: r.scenario, run: r.run, mode: r.res.mode, ms: r.ms, candidates: r.res.candidates.length,
+      filled: 8 - r.res.emptyCategories.length, usage: r.res.usage, gaps: r.res.gaps, discovered: r.res.discovered.length,
+      costUsd: costOf(r.res.usage),
+    }));
+    const totalCost = Object.fromEntries(Object.keys(stats.find((s) => s.costUsd)?.costUsd ?? {}).map((m) => [
+      m, stats.reduce((sum, s) => sum + (s.costUsd?.[m] ?? 0), 0),
+    ]));
+    const meanCostPerRun = (totalCost[COST_MODEL] ?? 0) / (stats.length || 1);
+    const costedRuns = stats.filter((s) => s.costUsd).length;
+    if (MAX_TOTAL_COST_USD !== null && (totalCost[COST_MODEL] ?? 0) > MAX_TOTAL_COST_USD) {
+      problems.push(`C1-cost ${COST_MODEL} $${(totalCost[COST_MODEL] ?? 0).toFixed(4)} > EVAL_MAX_COST_USD ${MAX_TOTAL_COST_USD}`);
+    }
 
     mkdirSync(new URL("./results/", import.meta.url), { recursive: true });
-    writeFileSync(new URL(`./results/${new Date().toISOString().replace(/[:.]/g, "-")}.json`, import.meta.url), JSON.stringify({ runs: RUNS, agentRate, means, floor, problems, stats, rows }, null, 2));
-    console.table(stats.map((s) => ({ ...s, usage: JSON.stringify(s.usage), gaps: s.gaps?.length })));
+    writeFileSync(new URL(`./results/${new Date().toISOString().replace(/[:.]/g, "-")}.json`, import.meta.url), JSON.stringify({ runs: RUNS, agentRate, means, floor, problems, stats, totalCost, costModel: COST_MODEL, rows }, null, 2));
+    console.table(stats.map((s) => ({ ...s, usage: JSON.stringify(s.usage), gaps: s.gaps?.length, costUsd: s.costUsd ? s.costUsd[COST_MODEL].toFixed(4) : "-" })));
+    console.log(`Agent cost (${costedRuns}/${stats.length} runs with usage): ${Object.entries(totalCost).map(([m, c]) => `${m} $${c.toFixed(4)}`).join(", ")}; mean per run at ${COST_MODEL}: $${meanCostPerRun.toFixed(4)}`);
 
     expect(problems, problems.slice(0, 15).join("\n")).toEqual([]);
     expect(agentRate).toBeGreaterThanOrEqual(MIN_AGENT_MODE_RATE);

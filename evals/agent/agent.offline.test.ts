@@ -59,16 +59,37 @@ describe.skipIf(!HAS_AGENT)("planning agent: scripted cheating model cannot get 
       const client = cheatingClient(g, attacks);
       const res = await runAgent(s.ctx, opts(s, { client }));
 
+      // Must run on the agent path: a silent fallback would pass the attack checks trivially.
+      expect(res.mode, "cheating model fell back to the planner; check ASSUMPTIONS in scripted.ts").toBe("agent");
       expect(checkResult(s.ctx, res, { allowedDiscoveredUrls: urls(s) })).toEqual([]);
       expect(scoreAgreement(core, res)).toEqual([]);                       // forged score ignored, code recomputes
       for (const a of attacks) expect(res.candidates.some((c) => a.check(c, s.ctx.activities)), `attack leaked: ${a.label}`).toBe(false);
 
-      // Control: the harness assumptions (tool names, submit shape) are right only if the clean row is accepted.
-      if (res.mode === "agent") {
-        expect(res.candidates.some((c) => c.activityId === g.activityId && c.slotStart === g.slotStart), "control row dropped: check ASSUMPTIONS in scripted.ts").toBe(true);
-        expect(res.gaps?.length ?? 0).toBeGreaterThan(0);                  // rejected rows are reported, not silent
-      }
+      // Control: the clean row is accepted, so the harness assumptions (tool names, submit shape) hold.
+      expect(res.candidates.some((c) => c.activityId === g.activityId && c.slotStart === g.slotStart), "control row dropped: check ASSUMPTIONS in scripted.ts").toBe(true);
+      expect(res.gaps?.length ?? 0).toBeGreaterThan(0);                    // rejected rows are reported, not silent
       expect(client.calls).toBeGreaterThanOrEqual(2);
+    });
+  }
+});
+
+describe.skipIf(!HAS_AGENT)("planning agent: per-run caps end the loop and fall back", () => {
+  const s = SCENARIOS[0];
+  const g = runCore(s.ctx).candidates[0];
+  const attacks = buildAttacks(s.ctx, g);
+  const caps: [string, Record<string, number>, string][] = [
+    ["tool-call cap", { maxToolCalls: 1 }, "tool-call cap reached"],
+    ["token cap", { maxTokens: 100 }, "token cap reached"],
+    ["timeout", { timeoutMs: -1 }, "timeout reached"],
+  ];
+  for (const [label, budget, gap] of caps) {
+    it(`${label}: stops, reports the gap, and never returns a cheating row`, async () => {
+      const client = cheatingClient(g, attacks);
+      const res = await runAgent(s.ctx, opts(s, { client, budget }));
+      expect(res.gaps ?? []).toContain(gap);
+      expect(res.mode).toBe("fallback");
+      expect(checkResult(s.ctx, res)).toEqual([]);
+      for (const a of attacks) expect(res.candidates.some((c) => a.check(c, s.ctx.activities)), `attack leaked: ${a.label}`).toBe(false);
     });
   }
 });
