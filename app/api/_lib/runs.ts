@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import type { Db } from "@/lib/db";
 import { getRun, latestRun, listEvents, listMembers, listRatings, listVotes, saveRun } from "@/lib/db";
 import { explain } from "@/lib/explain";
-import { loadActivities, loadBusy, loadForecast, planCandidates } from "@/lib/plan-provider";
+import { loadActivities, loadBusy, loadForecast, resolveActivity, runPlanningAgent } from "@/lib/plan-provider";
 import { tallyVotes } from "@/lib/tally";
 import type { Candidate, PlanContext, Rating, Run, TallyRow } from "@/lib/types";
 import { fail } from "./http";
@@ -23,7 +23,8 @@ export async function createRun(db: Db): Promise<Run> {
     forecastFor: loadForecast,
     now: new Date().toISOString(),
   };
-  const result = planCandidates(ctx);
+  // Agent path when a key exists; otherwise (or on any failure) the deterministic planner, same PlanResult shape.
+  const result = await runPlanningAgent(ctx);
   const candidates = await explain(result.candidates, { activities, discovered: result.discovered, members });
   const run: Run = {
     id: randomUUID(),
@@ -43,8 +44,8 @@ export function resolveRun(db: Db, runId: string | null): Run | null {
 }
 
 export function computeTally(db: Db, run: Run): { rows: TallyRow[]; ballotsCast: number } {
-  const prices = new Map(loadActivities().map((a) => [a.id, a.pricePerPerson]));
-  return tallyVotes(listVotes(db, run.id), run.candidates, (id) => prices.get(id));
+  const catalog = loadActivities();
+  return tallyVotes(listVotes(db, run.id), run.candidates, (id) => resolveActivity(id, catalog, run.discovered)?.pricePerPerson);
 }
 
 export function computeResult(db: Db, run: Run | null): {
